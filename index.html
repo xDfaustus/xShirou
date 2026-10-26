@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>xShirou - Yi Sun-shin Collector Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700;800&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --orange-primary: #ff8c00;
+      --orange-bright: #ff4500;
+      --neon-red: #ff0033;
+      --dark-ink: #141110;
+      --text-light: #ffffff;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #0b0908;
+      font-family: 'Outfit', sans-serif;
+      overflow: hidden;
+    }
+
+    /* Envoltorio de la tarjeta con borde animado Neón Naranja/Rojo/Negro */
+    .canvas-wrapper {
+      position: relative;
+      width: min(95vw, 1050px);
+      height: 600px;
+      border-radius: 22px;
+      padding: 6px;
+      overflow: hidden;
+      box-shadow: 0 0 40px rgba(255, 69, 0, 0.5), 0 20px 60px rgba(0, 0, 0, 0.9);
+      display: flex;
+    }
+
+    .canvas-wrapper::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(
+        transparent 0deg,
+        transparent 180deg,
+        #000000 220deg,
+        #ff0033 270deg,
+        #ff8c00 310deg,
+        #ffffff 360deg
+      );
+      animation: rotate-border-neon 3.5s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes rotate-border-neon {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 16px;
+      background: url('https://i.ibb.co/gZdGMCQf/dado.png') center/cover no-repeat;
+      overflow: hidden;
+      isolation: isolate;
+      z-index: 1;
+    }
+
+    /* Partículas cayendo de fondo */
+    #particle-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* FRANJA DIAGONAL BLANCA Y TEXTO ANIMADO ABAJO DEL PERSONAJE */
+    .diagonal-stripe-container {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 3;
+      overflow: hidden;
+    }
+
+    .diagonal-stripe {
+      position: absolute;
+      width: 200%;
+      height: 140px;
+      transform: translateY(-80px) rotate(-12deg);
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 0 35px rgba(0, 0, 0, 0.6);
+      border-top: 5px solid;
+      border-bottom: 5px solid;
+      border-image: linear-gradient(90deg, #ff8c00, #ff0033, #000000, #ffaa00, #ff8c00) 1;
+      animation: stripe-neon-glow 3s linear infinite;
+    }
+
+    @keyframes stripe-neon-glow {
+      0% { filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.8)); }
+      50% { filter: drop-shadow(0 0 20px rgba(255, 0, 51, 0.9)); }
+      100% { filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.8)); }
+    }
+
+    .hero-text-stream {
+      position: absolute;
+      width: 200%;
+      height: 100px;
+      transform: translateY(-80px) rotate(-12deg);
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      font-family: 'Syncopate', sans-serif;
+      font-size: 3.2rem;
+      font-weight: 800;
+      letter-spacing: 8px;
+    }
+
+    .hero-track {
+      display: flex;
+      gap: 80px;
+      animation: move-text-stream 8s linear infinite;
+    }
+
+    .hero-track span {
+      color: var(--orange-primary);
+      text-shadow: 
+        2px 2px 0px #ffffff,
+        -2px -2px 0px #ffffff,
+        2px -2px 0px #ffffff,
+        -2px 2px 0px #ffffff,
+        5px 5px 12px rgba(0, 0, 0, 0.6);
+    }
+
+    @keyframes move-text-stream {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Texto Gigante Sombreado de Fondo */
+    .bg-text-giant {
+      position: absolute;
+      top: 50%;
+      left: -40px;
+      transform: translateY(-50%) rotate(-90deg);
+      font-family: 'Syncopate', sans-serif;
+      font-size: 6.5rem;
+      font-weight: 800;
+      color: transparent;
+      -webkit-text-stroke: 2px rgba(255, 255, 255, 0.2);
+      letter-spacing: 12px;
+      white-space: nowrap;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Badge "COLLECTOR" */
+    .badge-collector {
+      position: absolute;
+      top: 20%;
+      left: 28%;
+      background: var(--orange-primary);
+      color: #ffffff;
+      font-family: 'Syncopate', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 6px 18px;
+      border-radius: 4px;
+      transform: rotate(-8deg);
+      box-shadow: 3px 3px 0px var(--dark-ink), 0 0 15px rgba(255, 140, 0, 0.6);
+      z-index: 7;
+    }
+
+    /* Texto sustituto: INTROSPECCIÓN */
+    .lore-text {
+      position: absolute;
+      top: 45px;
+      left: 35px;
+      font-family: 'Syncopate', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 6px;
+      color: var(--text-light);
+      text-shadow: 0 0 10px rgba(255, 140, 0, 0.8), 2px 2px 4px rgba(0, 0, 0, 0.9);
+      z-index: 7;
+      text-transform: uppercase;
+      border-left: 4px solid var(--orange-primary);
+      padding-left: 12px;
+    }
+
+    /* Logos Superiores Derecho */
+    .top-logos {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      text-align: right;
+      z-index: 7;
+    }
+
+    .mlbb-logo {
+      font-family: 'Syncopate', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #ffffff;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    .sub-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--orange-bright);
+    }
+
+    /* REPRODUCTOR DE MÚSICA */
+    .music-player {
+      position: absolute;
+      bottom: 35px;
+      left: 35px;
+      width: 310px;
+      padding: 14px 18px;
+      background: rgba(20, 17, 16, 0.82);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 140, 0, 0.4);
+      border-radius: 14px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 140, 0, 0.2);
+      z-index: 7;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .player-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .album-art {
+      width: 46px;
+      height: 46px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ff8c00, #ff0033);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+      flex-shrink: 0;
+    }
+
+    .album-art svg {
+      width: 24px;
+      height: 24px;
+      fill: #ffffff;
+    }
+
+    .track-info {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .track-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #ffffff;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .track-artist {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .player-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .btn-control {
+      background: none;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s, color 0.2s;
+    }
+
+    .btn-control:hover {
+      color: var(--orange-primary);
+      transform: scale(1.1);
+    }
+
+    .btn-play {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff8c00, #ff0033);
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(255, 69, 0, 0.6);
+    }
+
+    .btn-play:hover {
+      color: #ffffff;
+      transform: scale(1.08);
+      box-shadow: 0 0 18px rgba(255, 69, 0, 0.9);
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ff8c00, #ff0033);
+      border-radius: 3px;
+    }
+
+    /* Personaje */
+    .character-root {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      height: 100%;
+      z-index: 5;
+      pointer-events: none;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+    }
+
+    .character-img {
+      height: 110%;
+      object-fit: contain;
+      object-position: bottom right;
+      filter: drop-shadow(-10px 10px 25px rgba(0, 0, 0, 0.8));
+    }
+
+    /* xShirou - DEGRADADO ANIMADO EN ROJOS, NEGRO Y NARANJA */
+    .xshirou-tag {
+      position: absolute;
+      bottom: 30px;
+      right: 40px;
+      font-family: 'Syncopate', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: 4px;
+      z-index: 7;
+      text-transform: uppercase;
+      background: linear-gradient(
+        90deg,
+        #ff8c00 0%,
+        #ff0033 25%,
+        #141110 50%,
+        #ff0033 75%,
+        #ff8c00 100%
+      );
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: animated-gradient-text 4s linear infinite;
+      filter: drop-shadow(2px 2px 0px #ffffff) drop-shadow(0 0 15px rgba(255, 0, 51, 0.7));
+    }
+
+    @keyframes animated-gradient-text {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="canvas-wrapper">
+    <main class="canvas-container">
+      
+      <!-- Canvas para partículas flotantes/cayendo -->
+      <canvas id="particle-canvas"></canvas>
+
+      <!-- Franja Diagonal Blanca con Recorrido Neón y Texto Animado -->
+      <div class="diagonal-stripe-container">
+        <div class="diagonal-stripe"></div>
+        <div class="hero-text-stream">
+          <div class="hero-track">
+            <span>YI SUN-SHIN</span>
+            <span>YI SUN-SHIN</span>
+            <span>YI SUN-SHIN</span>
+            <span>YI SUN-SHIN</span>
+          </div>
+          <div class="hero-track">
+            <span>YI SUN-SHIN</span>
+            <span>YI SUN-SHIN</span>
+            <span>YI SUN-SHIN</span>
+            <span>YI SUN-SHIN</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Texto Gigante de Fondo (Gris/Transparente) -->
+      <div class="bg-text-giant">YI SUN-SHIN</div>
+
+      <!-- Badge "COLLECTOR" -->
+      <div class="badge-collector">COLLECTOR</div>
+
+      <!-- Texto de Lore sustituido por INTROSPECCIÓN -->
+      <div class="lore-text">INTROSPECCIÓN</div>
+
+      <!-- Logos Superiores (Mobile Legends) -->
+      <div class="top-logos">
+        <div class="mlbb-logo">MOBILE LEGENDS</div>
+        <div class="sub-badge">BANG BANG</div>
+      </div>
+
+      <!-- REPRODUCTOR DE MÚSICA FUNCIONAL -->
+      <div class="music-player">
+        <div class="player-header">
+          <div class="album-art">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+            </svg>
+          </div>
+          <div class="track-info">
+            <span class="track-title" id="song-title">Collector Theme</span>
+            <span class="track-artist" id="song-artist">Mobile Legends Soundtrack</span>
+          </div>
+        </div>
+
+        <div class="progress-bar-container" id="progress-container">
+          <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div class="player-controls">
+          <button class="btn-control" id="prev-btn" title="Anterior">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+            </svg>
+          </button>
+          <button class="btn-control btn-play" id="play-btn" title="Reproducir">
+            <svg id="play-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </button>
+          <button class="btn-control" id="next-btn" title="Siguiente">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Personaje Principal -->
+      <div class="character-root">
+        <img class="character-img" src="https://i.ibb.co/1tvZvXfj/dado-4.png" alt="Personaje">
+      </div>
+
+      <!-- xShirou con degradado animado abajo a la derecha -->
+      <div class="xshirou-tag">xShirou</div>
+
+    </main>
+  </div>
+
+  <script>
+    /* PARTICULAS CAYENDO */
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const particles = Array.from({ length: 35 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: Math.random() * 2.5 + 1,
+      speedY: Math.random() * 0.8 + 0.3,
+      speedX: (Math.random() - 0.5) * 0.4,
+      color: Math.random() > 0.4 ? '#ff8c00' : (Math.random() > 0.5 ? '#ff0033' : '#ffffff'),
+      alpha: Math.random() * 0.7 + 0.3
+    }));
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.y += p.speedY;
+        p.x += p.speedX;
+        if (p.y > canvas.height) {
+          p.y = -10;
+          p.x = Math.random() * canvas.width;
+        }
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = p.color;
+        ctx.fill();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    /* REPRODUCTOR DE MÚSICA CON SOPORTE AUDIO & SINTETIZADOR WEB AUDIO */
+    const playlist = [
+      { title: "Yi Sun-shin Collector Theme", artist: "Mobile Legends: Bang Bang", src: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73223.mp3?filename=epic-cinematic-trailer-113982.mp3" },
+      { title: "Cyberpunk Flame", artist: "Synthwave Beats", src: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=action-electro-sport-fast-115160.mp3" }
+    ];
+
+    let currentTrack = 0;
+    let isPlaying = false;
+    let synthInterval = null;
+    let audioCtx = null;
+
+    const audio = new Audio();
+    audio.crossOrigin = "anonymous";
+
+    const playBtn = document.getElementById('play-btn');
+    const playIcon = document.getElementById('play-icon');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const titleEl = document.getElementById('song-title');
+    const artistEl = document.getElementById('song-artist');
+    const progressBar = document.getElementById('progress-bar');
+    const progressContainer = document.getElementById('progress-container');
+
+    function loadTrack(index) {
+      currentTrack = index;
+      titleEl.textContent = playlist[currentTrack].title;
+      artistEl.textContent = playlist[currentTrack].artist;
+      audio.src = playlist[currentTrack].src;
+    }
+
+    function playSynthBackup() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (synthInterval) clearInterval(synthInterval);
+      
+      let step = 0;
+      const notes = [220, 261.63, 293.66, 329.63, 392.00, 440];
+      synthInterval = setInterval(() => {
+        if (!isPlaying) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(notes[step % notes.length], audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+        step++;
+        progressBar.style.width = ((step % 100) + 1) + '%';
+      }, 350);
+    }
+
+    function playTrack() {
+      isPlaying = true;
+      playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+      audio.play().catch(() => {
+        playSynthBackup();
+      });
+    }
+
+    function pauseTrack() {
+      isPlaying = false;
+      playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+      audio.pause();
+      if (synthInterval) clearInterval(synthInterval);
+    }
+
+    playBtn.addEventListener('click', () => {
+      if (isPlaying) pauseTrack();
+      else playTrack();
+    });
+
+    prevBtn.addEventListener('click', () => {
+      currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+      loadTrack(currentTrack);
+      if (isPlaying) playTrack();
+    });
+
+    nextBtn.addEventListener('click', () => {
+      currentTrack = (currentTrack + 1) % playlist.length;
+      loadTrack(currentTrack);
+      if (isPlaying) playTrack();
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      if (audio.duration) {
+        const pct = (audio.currentTime / audio.duration) * 100;
+        progressBar.style.width = pct + '%';
+      }
+    });
+
+    audio.addEventListener('ended', () => {
+      nextBtn.click();
+    });
+
+    progressContainer.addEventListener('click', (e) => {
+      const width = progressContainer.clientWidth;
+      const clickX = e.offsetX;
+      if (audio.duration) {
+        audio.currentTime = (clickX / width) * audio.duration;
+      }
+    });
+
+    loadTrack(0);
+  </script>
+</body>
+</html>
