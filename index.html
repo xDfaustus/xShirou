@@ -449,8 +449,8 @@
             </svg>
           </div>
           <div class="track-info">
-            <span class="track-title" id="song-title">Collector Theme</span>
-            <span class="track-artist" id="song-artist">Mobile Legends Soundtrack</span>
+            <span class="track-title" id="song-title">Cargando...</span>
+            <span class="track-artist" id="song-artist">...</span>
           </div>
         </div>
 
@@ -531,19 +531,24 @@
     }
     animateParticles();
 
-    /* REPRODUCTOR DE MÚSICA CON SOPORTE AUDIO & SINTETIZADOR WEB AUDIO */
+    /* REPRODUCTOR DE MÚSICA */
     const playlist = [
-      { title: "Yi Sun-shin Collector Theme", artist: "Mobile Legends: Bang Bang", src: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73223.mp3?filename=epic-cinematic-trailer-113982.mp3" },
-      { title: "Cyberpunk Flame", artist: "Synthwave Beats", src: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=action-electro-sport-fast-115160.mp3" }
+      {
+        title: "酔いどれ知らず",
+        artist: "【Kanaria】",
+        src: "assets/0.mp3"
+      },
+      {
+        title: "BLEACH",
+        artist: "Romaji",
+        src: "assets/1.mp3"
+      }
     ];
 
     let currentTrack = 0;
     let isPlaying = false;
-    let synthInterval = null;
-    let audioCtx = null;
 
     const audio = new Audio();
-    audio.crossOrigin = "anonymous";
 
     const playBtn = document.getElementById('play-btn');
     const playIcon = document.getElementById('play-icon');
@@ -561,34 +566,11 @@
       audio.src = playlist[currentTrack].src;
     }
 
-    function playSynthBackup() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (synthInterval) clearInterval(synthInterval);
-      
-      let step = 0;
-      const notes = [220, 261.63, 293.66, 329.63, 392.00, 440];
-      synthInterval = setInterval(() => {
-        if (!isPlaying) return;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(notes[step % notes.length], audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.3);
-        step++;
-        progressBar.style.width = ((step % 100) + 1) + '%';
-      }, 350);
-    }
-
     function playTrack() {
       isPlaying = true;
       playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
-      audio.play().catch(() => {
-        playSynthBackup();
+      audio.play().catch(err => {
+        console.warn("Autoplay o carga bloqueada:", err);
       });
     }
 
@@ -596,7 +578,6 @@
       isPlaying = false;
       playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
       audio.pause();
-      if (synthInterval) clearInterval(synthInterval);
     }
 
     playBtn.addEventListener('click', () => {
@@ -635,6 +616,7 @@
       }
     });
 
+    // Cargar la primera pista por defecto
     loadTrack(0);
   </script>
 </body>
