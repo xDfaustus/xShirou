@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>xShirou - Yi Sun-shin Collector Profile</title>
+  <title>xShirou - Yi Sun-shin Married Profile</title>
   <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700;800&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     * {
@@ -172,7 +172,7 @@
       pointer-events: none;
     }
 
-    /* Badge "COLLECTOR" */
+    /* Badge "Married" con cursor interactivo */
     .badge-collector {
       position: absolute;
       top: 20%;
@@ -187,6 +187,13 @@
       transform: rotate(-8deg);
       box-shadow: 3px 3px 0px var(--dark-ink), 0 0 15px rgba(255, 140, 0, 0.6);
       z-index: 7;
+      cursor: pointer;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .badge-collector:hover {
+      transform: rotate(-8deg) scale(1.05);
+      filter: brightness(1.1);
     }
 
     /* Texto sustituto: INTROSPECCIÓN */
@@ -428,8 +435,8 @@
       <!-- Texto Gigante de Fondo (Gris/Transparente) -->
       <div class="bg-text-giant">YI SUN-SHIN</div>
 
-      <!-- Badge "COLLECTOR" -->
-    <div class="badge-collector" id="collector-badge" style="cursor: pointer;">Married</div>
+      <!-- Badge "Married" con Redirección -->
+      <div class="badge-collector" id="collector-badge">Married</div>
 
       <!-- Texto de Lore sustituido por INTROSPECCIÓN -->
       <div class="lore-text">INTROSPECCIÓN</div>
@@ -530,6 +537,11 @@
       requestAnimationFrame(animateParticles);
     }
     animateParticles();
+
+    /* REDIRECCIÓN DEL BADGE "Married" */
+    document.getElementById('collector-badge').addEventListener('click', () => {
+      window.open('https://xat.me/iDaviiessx', '_blank');
+    });
 
     /* REPRODUCTOR DE MÚSICA */
     const playlist = [
